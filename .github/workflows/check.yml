@@ -1,0 +1,38 @@
+name: Check Versions
+
+on:
+  schedule:
+    - cron:  '0 * * * *'
+
+env:
+  DESTINATION_REPOSITORY: github/codeql-action
+  SOURCE_REPOSITORY: ${{ github.repository }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Compare The Latest Releases Between Two Repositories
+        id: compare-releases
+        uses: NickLiffen/compare-releases@v2.0.4
+        with:
+          destinationRepository: ${{ env.DESTINATION_REPOSITORY }}
+          sourceRepository: ${{ env.SOURCE_REPOSITORY }}
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Get results
+        run: |
+          echo "The result is ${{ steps.compare-releases.outputs.repo }}"
+          echo "The result is ${{ steps.compare-releases.outputs.tagName }}"
+
+      - name: Invoke Release Workflow
+        if: ${{ steps.compare-releases.outputs.repo == env.DESTINATION_REPOSITORY }}
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: release
+          token: ${{ secrets.GH_TOKEN }}
+          inputs: '{ "tagName": "${{ steps.compare-releases.outputs.tagName }}" }'
+

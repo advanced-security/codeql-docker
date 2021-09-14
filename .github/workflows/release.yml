@@ -1,10 +1,11 @@
-name: Create and publish a Docker image
+name: release
 
 on:
-  push:
-    branches: ['main']
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      tagName:
+        description: 'Name to tag this release'
+        required: true
 
 env:
   REGISTRY: ghcr.io
@@ -41,3 +42,15 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Get result
+        run: |
+          echo "The result is ${{ github.event.inputs.tagName }}"
+
+      - name: Publish Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GH_TOKEN }}"
+          automatic_release_tag: "${{ github.event.inputs.tagName }}"
+          prerelease: false
+          title: "${{ github.event.inputs.tagName }}"
