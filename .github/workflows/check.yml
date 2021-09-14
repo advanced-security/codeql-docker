@@ -2,7 +2,7 @@ name: Check Versions
 
 on:
   schedule:
-    - cron:  '59 ** * * *'
+    - cron:  '0 * * * *'
 
 env:
   REGISTRY: ghcr.io
