@@ -5,8 +5,6 @@ on:
     - cron:  '0 * * * *'
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
   DESTINATION_REPOSITORY: github/codeql-action
   SOURCE_REPOSITORY: ${{ github.repository }}
 
@@ -25,7 +23,7 @@ jobs:
           sourceRepository: ${{ env.SOURCE_REPOSITORY }}
           token: ${{ secrets.GH_TOKEN }}
 
-      - name: Get result
+      - name: Get results
         run: |
           echo "The result is ${{ steps.compare-releases.outputs.repo }}"
           echo "The result is ${{ steps.compare-releases.outputs.tagName }}"
