@@ -54,6 +54,3 @@ jobs:
           automatic_release_tag: "${{ github.event.inputs.tagName }}"
           prerelease: false
           title: "${{ github.event.inputs.tagName }}"
-          files: |
-            LICENSE.txt
-            *.jar
