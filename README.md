@@ -29,6 +29,12 @@ docker run -it  -v $PWD:/workspace geekmasher/codeql
 **Runs full analysis:**
 
 ```bash
+# Required environment variables
+GITHUB_TOKEN=ghp_abcd...
+GITHUB_REPOSITORY=geekmasher/codeql-docker
+# [optional] environment variables
+GITHUB_REF=refs/pull/<PR-number>/head
+
 # Autodetect language used
 codeql-full
 ```

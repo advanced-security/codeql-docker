@@ -12,8 +12,9 @@ fi
 for DATABASE in $CODEQL_DATABASES/* ; do
     CODEQL_DATABASE="$CODEQL_DATABASES/$DATABASE"
     echo "CodeQL Database :: $CODEQL_DATABASE"
-    # codeql database finalize \
-    #     $CODEQL_DATABASES/$DATABASE
+
+    # For tracing
+    codeql database finalize $CODEQL_DATABASES/$DATABASE | true
 
     # This will run in sequencial order
     codeql database analyze \
@@ -34,3 +35,4 @@ for SARIF_FILE in $CODEQL_RESULTS/* ; do
         --ref=$GIT_REF \
         --commit=$GIT_HASH
 done
+
