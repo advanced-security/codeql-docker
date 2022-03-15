@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 INSTALL_GITHUB_CLI=0
 
@@ -49,15 +50,24 @@ mv /codeql/codeql /codeql/bin
 echo "Create bin Symlink..."
 ln -s $CODEQL_CLI_PATH /usr/bin/codeql
 
+if ! command -v codeql --version &> /dev/null ; then
+    echo "CodeQL Failed to install"
+fi
+
 echo "CodeQL CLI Version"
 codeql --version
 
 echo "Cleaning up image..."
-rm -f $CODEQL_CLI_ARCHIVE
+#rm -f $CODEQL_CLI_ARCHIVE
 
 if [[ $INSTALL_GITHUB_CLI = "1" ]]; then
-  curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-  sudo apt update
-  sudo apt install gh
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+    apt-get update -y
+    apt-get install -y gh
+    
+    if ! command -v gh &> /dev/null ; then
+        echo "Failed to install GitHub CLI"
+        exit 1
+    fi
 fi

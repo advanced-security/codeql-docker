@@ -3,7 +3,12 @@
 set -e
 
 # Init config
-source /codeql/codeql-config.sh
+if [[ -f /codeql/codeql-config.sh ]] ; then
+    source /codeql/codeql-config.sh
+else
+    source ./config/codeql-config.sh
+fi
+
 
 codeql-init --auto-detect
 

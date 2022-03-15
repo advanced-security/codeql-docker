@@ -1,7 +1,11 @@
 #!/bin/bash
 set -e
 # Init config
-source /codeql/codeql-config.sh
+if [[ -f /codeql/codeql-config.sh ]] ; then
+    source /codeql/codeql-config.sh
+else
+    source ./config/codeql-config.sh
+fi
 
 AUTO_DETECT=0
 CODEQL_TRACING=1
@@ -34,10 +38,13 @@ for i in "$@"; do
   esac
 done
 
-
 if [[ "$AUTO_DETECT" = "1" ]]; then
     if ! command -v gh &> /dev/null ; then
         echo "GitHub CLI is not installed and can't auto-detect languages"
+        exit 1
+    fi
+    if [ -z $GITHUB_TOKEN ]; then
+        echo "GitHub Access Token is not present and is required for language detection"
         exit 1
     fi
     # Get the data from GitHub
@@ -61,7 +68,12 @@ for CODEQL_LANGUAGE in ${CODEQL_LANGUAGES//,/ } ; do
     CODEQL_GITHUB_REPOSITORY=$(echo $GITHUB_REPOSITORY | tr '/' '_')
     CODEQL_DATABASE="$CODEQL_DATABASES/${CODEQL_LANGUAGE}-${CODEQL_GITHUB_REPOSITORY}"
 
-    if [ ! -z ${BUILD_COMMAND+x} ] && [ "$CODEQL_LANGUAGE" =~ ^(cpp|csharp|java)$ ] ; then
+    if [ -d $CODEQL_DATABASES ] ; then
+        echo "Deleting old database :: $CODEQL_DATABASE"
+        rm -rf $CODEQL_DATABASE
+    fi
+
+    if [ ! -z ${BUILD_COMMAND+x} ] && [[ "$CODEQL_LANGUAGE" =~ ^(cpp|csharp|java)$ ]] ; then
         codeql database create \
             --language="$CODEQL_LANGUAGE" \
             --command=${BUILD_COMMAND} \

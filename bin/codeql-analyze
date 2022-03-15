@@ -1,9 +1,13 @@
 #!/bin/bash
-
 set -e
 
 # Init config
-source /codeql/codeql-config.sh
+if [[ -f /codeql/codeql-config.sh ]] ; then
+    source /codeql/codeql-config.sh
+else
+    source ./config/codeql-config.sh
+fi
+
 
 for DATABASE in $CODEQL_DATABASES/* ; do
     CODEQL_DATABASE="$CODEQL_DATABASES/$DATABASE"
