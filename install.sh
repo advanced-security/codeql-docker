@@ -1,5 +1,22 @@
 #!/bin/bash
 
+INSTALL_GITHUB_CLI=0
+
+for i in "$@"; do
+  case $i in
+    --github-cli)
+      INSTALL_GITHUB_CLI=1
+      shift # past argument with no value
+      ;;
+    -*|--*)
+      echo "Unknown option $i"
+      exit 1
+      ;;
+    *)
+      ;;
+  esac
+done
+
 get_latest_release() {
   # https://gist.github.com/lukechilds/a83e1d7127b78fef38c2914c4ececc3c
   curl --silent "https://api.github.com/repos/github/codeql-action/releases/latest" |
@@ -37,3 +54,10 @@ codeql --version
 
 echo "Cleaning up image..."
 rm -f $CODEQL_CLI_ARCHIVE
+
+if [[ $INSTALL_GITHUB_CLI = "1" ]]; then
+  curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+  sudo apt update
+  sudo apt install gh
+fi

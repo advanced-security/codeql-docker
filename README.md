@@ -10,6 +10,11 @@ The install script will find and install the latest CodeQL bundle which contains
 docker build -t organization/codeql .
 ```
 
+## Features
+
+- Autodetect language
+- 
+
 ## Running
 
 ##### Dropping into shell
@@ -18,7 +23,32 @@ docker build -t organization/codeql .
 docker run -it  -v $PWD:/workspace geekmasher/codeql
 ```
 
-### Example Analysis
+
+### Built in commands
+
+**Runs full analysis:**
+
+```bash
+# Autodetect language used
+codeql-full
+```
+
+**Runs stages:**
+
+```bash
+# Initialisation of CodeQL
+codeql-init --auto-detect
+# or manually
+codeql-init -l java
+
+# [optional] Build command (tracing is enabled)
+mvn clean install -DskipTests=true
+
+# Run analysis
+codeql-analyze
+```
+
+### Example Using CLI Directly
 
 ```bash
 # Create database
@@ -37,8 +67,3 @@ codeql github upload-results --repository=<repository-name> \
       --sarif="codeql-results.json"
 
 ```
-
-### Aliases
-
-In the `~/.bashrc` there is a number of values and functions that hopefully will make it a lot easier to use CodeQL CLI.
-This isn't required and can be removed in the `Dockerfile`.

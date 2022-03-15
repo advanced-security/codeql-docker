@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+
+# Init config
+source /codeql/codeql-config.sh
+
+for DATABASE in $CODEQL_DATABASES/* ; do
+    CODEQL_DATABASE="$CODEQL_DATABASES/$DATABASE"
+    echo "CodeQL Database :: $CODEQL_DATABASE"
+    # codeql database finalize \
+    #     $CODEQL_DATABASES/$DATABASE
+
+    # This will run in sequencial order
+    codeql database analyze \
+        --format="sarif-latest" \
+        --sarif-category="${DATABASE}" \
+        --output="${CODEQL_RESULTS}/${DATABASE}.sarif" \
+        ${CODEQL_DATABASE} \
+        $language-$CODEQL_SUITE.qls \
+done
+
+# Upload results for each SARIF results file found
+for SARIF_FILE in $CODEQL_RESULTS/* ; do
+    # The --sarif-category must be set in case of multiple databases
+    codeql github upload-results \
+        --sarif=$SARIF_FILE \
+        --github-url=$GITHUB_INSTANCE \
+        --repository=$GITHUB_REPOSITORY \
+        --ref=$GIT_REF \
+        --commit=$GIT_HASH
+done

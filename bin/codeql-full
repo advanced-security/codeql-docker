@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+# Init config
+source /codeql/codeql-config.sh
+
+codeql-init --auto-detect
+
+codeql-analyze

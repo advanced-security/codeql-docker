@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+# Init config
+source /codeql/codeql-config.sh
+
+# Run CodeQL
+$CODEQL_CLI_PATH $@

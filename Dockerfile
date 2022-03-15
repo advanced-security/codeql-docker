@@ -14,15 +14,15 @@ WORKDIR /codeql
 
 # Run install script
 ADD install.sh .
-RUN chmod +x install.sh && ./install.sh
-
-RUN useradd -m codeql && chown -R codeql:codeql /codeql
+RUN chmod +x install.sh && ./install.sh --github-cli
+# Add scripts to bin
+ADD config/* /codeql
+ADD bin/* /bin
 
 # Create CodeQL user
+RUN useradd -m codeql && chown -R codeql:codeql /codeql
 USER codeql
-WORKDIR /workspace
 
-# [optional] Add aliases
-ADD aliases.sh /home/codeql/.bash_aliases
+WORKDIR /workspace
 
 ENTRYPOINT [ "bash" ]
