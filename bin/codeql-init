@@ -85,28 +85,28 @@ for CODEQL_LANGUAGE in ${CODEQL_LANGUAGES//,/ } ; do
     CODEQL_CREATE="codeql database create --language=$CODEQL_LANGUAGE"
     
     if [ ! -z ${BUILD_COMMAND+x} ] && [[ "$CODEQL_LANGUAGE" =~ ^(cpp|csharp|java|go)$ ]] ; then
+        # Add build command
         CODEQL_CREATE="$CODEQL_CREATE --command=${BUILD_COMMAND} $CODEQL_DATABASE"
-        eval $CODEQL_CREATE
-    else
+
+    elif [ "$CODEQL_TRACING" = "1" ] && [[ "$CODEQL_LANGUAGE" =~ ^(cpp|csharp|java|go)$ ]]; then
+        # Swap to a init command and add --begin-tracing
         # https://codeql.github.com/docs/codeql-cli/creating-codeql-databases/#using-indirect-build-tracing
-        if [ "$CODEQL_TRACING" = "1" ] && [[ "$CODEQL_LANGUAGE" =~ ^(cpp|csharp|java|go)$ ]]; then
-            CODEQL_CREATE="codeql database init --begin-tracing --language=$CODEQL_LANGUAGE --source-root=."
-        fi
+        CODEQL_CREATE="codeql database init --begin-tracing --language=$CODEQL_LANGUAGE --source-root=. $CODEQL_DATABASE"
+    fi
 
-        CODEQL_CREATE="$CODEQL_CREATE $CODEQL_DATABASE"
-        echo "CodeQL Create :: $CODEQL_CREATE"
-        eval $CODEQL_CREATE
+    echo "CodeQL Create Command :: $CODEQL_CREATE"
+    eval $CODEQL_CREATE
 
-        if [ "$CODEQL_TRACING" = "1" ] && [[ "$CODEQL_LANGUAGE" =~ ^(cpp|csharp|java|go)$ ]]; then
-            echo "CodeQL -> Start Tracing"
-            # Note: This only supports one language at a time to be intercepted using tracing
-            source $CODEQL_DATABASE/temp/tracingEnvironment/start-tracing.sh
+    if [ "$CODEQL_TRACING" = "1" ] && [[ "$CODEQL_LANGUAGE" =~ ^(cpp|csharp|java|go)$ ]]; then
+        echo "CodeQL -> Start Tracing"
+        # Note: This only supports one language at a time to be intercepted using tracing
+        source $CODEQL_DATABASE/temp/tracingEnvironment/start-tracing.sh
 
-        elif [ "$CODEQL_TRACING" = "0" ] && [[ "$CODEQL_LANGUAGE" =~ ^(cpp|csharp|java|go)$ ]]; then
-            CODEQL_AUTO_BUILD_PATH="$CODEQL_BIN_PATH/$CODEQL_LANGUAGE/tools/autobuild.sh"
-            echo "Running CodeQL auto-build :: $CODEQL_AUTO_BUILD_PATH"
-            
-            eval $CODEQL_AUTO_BUILD_PATH
-        fi
+    elif [ "$CODEQL_TRACING" = "0" ] && [[ "$CODEQL_LANGUAGE" =~ ^(cpp|csharp|java|go)$ ]]; then
+        CODEQL_AUTO_BUILD_PATH="$CODEQL_BIN_PATH/$CODEQL_LANGUAGE/tools/autobuild.sh"
+        echo "Running CodeQL auto-build :: $CODEQL_AUTO_BUILD_PATH"
+        
+        eval $CODEQL_AUTO_BUILD_PATH
     fi
 done
+
