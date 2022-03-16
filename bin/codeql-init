@@ -90,7 +90,7 @@ for CODEQL_LANGUAGE in ${CODEQL_LANGUAGES//,/ } ; do
     else
         # https://codeql.github.com/docs/codeql-cli/creating-codeql-databases/#using-indirect-build-tracing
         if [ "$CODEQL_TRACING" = "1" ] && [[ "$CODEQL_LANGUAGE" =~ ^(cpp|csharp|java|go)$ ]]; then
-            CODEQL_CREATE="$CODEQL_CREATE --begin-tracing"
+            CODEQL_CREATE="codeql database init --begin-tracing --language=$CODEQL_LANGUAGE --source-root=."
         fi
 
         CODEQL_CREATE="$CODEQL_CREATE $CODEQL_DATABASE"
