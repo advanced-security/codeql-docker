@@ -93,6 +93,9 @@ for CODEQL_LANGUAGE in ${CODEQL_LANGUAGES//,/ } ; do
         # Swap to a init command and add --begin-tracing
         # https://codeql.github.com/docs/codeql-cli/creating-codeql-databases/#using-indirect-build-tracing
         CODEQL_CREATE="codeql database init --begin-tracing --language=$CODEQL_LANGUAGE --source-root=. $CODEQL_DATABASE"
+    else
+        # Append only Database
+        CODEQL_CREATE="$CODEQL_CREATE $CODEQL_DATABASE"
     fi
 
     echo "CodeQL Create Command :: $CODEQL_CREATE"
