@@ -27,6 +27,7 @@ for i in "$@"; do
         ;;
     -c=*|--command=*)
         BUILD_COMMAND="${i#*=}"
+        CODEQL_TRACING=0    # disable tracing too
         shift
         ;;
     -*|--*)
