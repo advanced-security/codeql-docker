@@ -36,7 +36,7 @@ GITHUB_REPOSITORY=geekmasher/codeql-docker
 GITHUB_REF=refs/pull/<PR-number>/head
 
 # Autodetect language used
-codeql-full
+codeql-scan
 ```
 
 **Runs stages:**
@@ -45,7 +45,7 @@ codeql-full
 # Initialisation of CodeQL
 codeql-init --auto-detect
 # or manually
-codeql-init -l java
+codeql-init -l=java
 
 # [optional] Build command (tracing is enabled)
 mvn clean install -DskipTests=true
