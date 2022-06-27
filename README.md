@@ -1,19 +1,20 @@
 # codeql-docker
 
-CodeQL Docker image build on Ubuntu latest Docker image
+CodeQL Docker image based on Ubuntu latest Docker image.
+
 
 ## Building Image
 
-The install script will find and install the latest CodeQL bundle which contains the current version of the CLI and queries.
+The install script will find and install the latest [CodeQL bundle](https://github.com/github/codeql-action/releases) which contains the current version of the CLI and queries.
 
 ```bash
 docker build -t organization/codeql .
 ```
 
-## Features
+## Binaries & Features
 
-- Autodetect language
-- 
+- [Additional Scripts / Binaries](./bin)
+- Auto-detect languages
 
 ## Running
 
